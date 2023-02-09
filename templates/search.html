@@ -63,11 +63,11 @@
                             </div>
                         </div>
                     </div>
-                    {% for category_product in search_product %}
+                    {% for product in search_product %}
                     <div class="col-md-4">
                         <div class="product-item">
                             <div class="product-title">
-                                <a href="#">{{category_product.name}}</a>
+                                <a href="/product_detail/{{product.slug}}">{{product.name}}</a>
                                 <div class="ratting">
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star"></i>
@@ -78,7 +78,7 @@
                             </div>
                             <div class="product-image">
                                 <a href="product-detail.html">
-                                    <img src="{{category_product.image.url}}" alt="Product Image">
+                                    <img src="{{product.image.url}}" alt="Product Image">
                                 </a>
                                 <div class="product-action">
                                     <a href="#"><i class="fa fa-cart-plus"></i></a>
@@ -87,10 +87,10 @@
                                 </div>
                             </div>
                             <div class="product-price">
-                                {% if category_product.discounted_price > 0 %}
-                                <h3><span>Rs</span> {{category_product.discounted_price}}</h3>
+                                {% if product.discounted_price > 0 %}
+                                <h3><span>Rs</span> {{product.discounted_price}}</h3>
                                 {% else %}
-                                <h3><span>$</span> {{category_product.price}}</h3>
+                                <h3><span>$</span> {{product.price}}</h3>
                                 {% endif %}
                                 <a class="btn" href=""><i class="fa fa-shopping-cart"></i>Buy Now</a>
                             </div>
@@ -124,22 +124,11 @@
                     <h2 class="title">Category</h2>
                     <nav class="navbar bg-light">
                         <ul class="navbar-nav">
+                            {% for cat in categories %}
                             <li class="nav-item">
-                                <a class="nav-link" href="#"><i class="fa fa-female"></i>Fashion & Beauty</a>
+                                <a class="nav-link" href="/category/{{cat.slug}}"><i class="{{cat.logo}}"></i>{{cat.name}}</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#"><i class="fa fa-child"></i>Kids & Babies Clothes</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#"><i class="fa fa-tshirt"></i>Men & Women Clothes</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#"><i class="fa fa-mobile-alt"></i>Gadgets & Accessories</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#"><i class="fa fa-microchip"></i>Electronics &
-                                    Accessories</a>
-                            </li>
+                            {% endfor %}
                         </ul>
                     </nav>
                 </div>
@@ -184,12 +173,9 @@
                 <div class="sidebar-widget brands">
                     <h2 class="title">Our Brands</h2>
                     <ul>
-                        <li><a href="#">Nulla </a><span>(45)</span></li>
-                        <li><a href="#">Curabitur </a><span>(34)</span></li>
-                        <li><a href="#">Nunc </a><span>(67)</span></li>
-                        <li><a href="#">Ullamcorper</a><span>(74)</span></li>
-                        <li><a href="#">Fusce </a><span>(89)</span></li>
-                        <li><a href="#">Sagittis</a><span>(28)</span></li>
+                        {% for brand in brands %}
+                        <li><a href="/brand/{{brand.slug}}">{{brand.name}}</a><span>(45)</span></li>
+                        {% endfor %}
                     </ul>
                 </div>
 
