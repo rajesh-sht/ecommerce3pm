@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from .models import *
-from django.contrib.auth import User
+from django.contrib.auth.models import User
 from django.contrib import messages
 # Create your views here.
 
@@ -76,7 +76,7 @@ def signup(request):
             if User.objects.filter(username = username).exists():
                 messages.error(request, 'This username is already taken!')
                 return redirect('/signup')
-            elif User.objects.filter(email = email).exist():
+            elif User.objects.filter(email = email).exists():
                 messages.error(request, 'This email is already registered!')
                 return redirect('/signup')
             else:
