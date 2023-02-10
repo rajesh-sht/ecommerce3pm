@@ -47,5 +47,13 @@ class SearchView(BaseView):
 class ProductDetailView(BaseView):
     def get(self, request, slug):
         self.views['product_detail'] = Product.objects.filter(slug = slug)
-        # brand = Product.objects.filter(brand = brand)
+        subcat_id = Product.objects.get(slug=slug).subcategory_id
+        self.views['related_products'] = Product.objects.filter(subcategory_id = subcat_id)
+        products_id = Product.objects.get(slug=slug).id
+        self.views['product_images'] = ProductImage.objects.filter(product_id=products_id)
+
         return render(request, 'product-detail.html', self.views)
+
+def product_review(request, slug):
+
+    return redirect(f'/product_detail/{slug}')
