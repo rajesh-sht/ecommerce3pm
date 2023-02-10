@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from .models import *
+from django.contrib.auth import User
+from django.contrib import messages
 # Create your views here.
 
 class BaseView(View):
@@ -46,9 +48,12 @@ class SearchView(BaseView):
 
 class ProductDetailView(BaseView):
     def get(self, request, slug):
+        # for particular product detail
         self.views['product_detail'] = Product.objects.filter(slug = slug)
+        # for related product
         subcat_id = Product.objects.get(slug=slug).subcategory_id
         self.views['related_products'] = Product.objects.filter(subcategory_id = subcat_id)
+        # for multiple images view
         products_id = Product.objects.get(slug=slug).id
         self.views['product_images'] = ProductImage.objects.filter(product_id=products_id)
 
@@ -57,3 +62,33 @@ class ProductDetailView(BaseView):
 def product_review(request, slug):
 
     return redirect(f'/product_detail/{slug}')
+
+def signup(request):
+    if request.method == 'POST':
+        first_name = request.POST['f_name']
+        last_name = request.POST['l_name']
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        cpassword = request.POST['cpassword']
+
+        if password == cpassword:
+            if User.objects.filter(username = username).exists():
+                messages.error(request, 'This username is already taken!')
+                return redirect('/signup')
+            elif User.objects.filter(email = email).exist():
+                messages.error(request, 'This email is already registered!')
+                return redirect('/signup')
+            else:
+                data = User.objects.create(
+                    first_name = first_name,
+                    last_name = last_name,
+                    username = username,
+                    email = email,
+                    password = password
+                )
+                data.save()
+        else:
+            messages.error(request, 'This password doesnot match!')
+            return redirect('/signup')
+    return render(request,'signup.html')
