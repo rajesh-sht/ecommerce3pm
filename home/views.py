@@ -89,6 +89,9 @@ def signup(request):
                 )
                 data.save()
         else:
-            messages.error(request, 'This password doesnot match!')
+            messages.error(request, 'Entered password doesnot match!')
             return redirect('/signup')
     return render(request,'signup.html')
+
+
+#
