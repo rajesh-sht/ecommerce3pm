@@ -56,11 +56,25 @@ class ProductDetailView(BaseView):
         # for multiple images view
         products_id = Product.objects.get(slug=slug).id
         self.views['product_images'] = ProductImage.objects.filter(product_id=products_id)
+        self.views['product_reviews'] = ProductReview.objects.filter(slug = slug)
 
         return render(request, 'product-detail.html', self.views)
 
 def product_review(request, slug):
-
+    if request.method == 'POST':
+        username = request.user.username
+        email = request.user.email
+        star = request.POST['star']
+        comment = request.POST['comment']
+        data = ProductReview.objects.create(
+            name = username,
+            email = email,
+            star = star,
+            comment = comment,
+            slug = slug
+        )
+        data.save()
+        messages.success(request, 'The review is submitted!')
     return redirect(f'/product_detail/{slug}')
 
 def signup(request):
@@ -93,5 +107,3 @@ def signup(request):
             return redirect('/signup')
     return render(request,'signup.html')
 
-
-#

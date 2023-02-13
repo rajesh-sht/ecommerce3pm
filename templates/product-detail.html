@@ -89,7 +89,7 @@
                             <div id="description" class="container tab-pane active">
                                 <h4>Product description</h4>
                                 <p>
-                                   {{product.description}}
+                                    {{product.description}}
                                 </p>
                             </div>
                             <div id="specification" class="container tab-pane fade">
@@ -99,91 +99,96 @@
                                 </ul>
                             </div>
                             <div id="reviews" class="container tab-pane fade">
+                                {% for rev in product_reviews %}
                                 <div class="reviews-submitted">
-                                    <div class="reviewer">Phasellus Gravida - <span>01 Jan 2020</span></div>
+                                    <div class="reviewer">{{rev.name}}<span> {{rev.date}}</span></div>
                                     <div class="ratting">
+                                        {% for i in 1|ljust:rev.star %}
                                         <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
+                                        {% endfor %}
                                     </div>
                                     <p>
-                                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
-                                        doloremque laudantium, totam rem aperiam.
+                                        {{rev.comment}}
                                     </p>
                                 </div>
-                                <div class="reviews-submit">
-                                    <h4>Give your Review:</h4>
-                                    <div class="ratting">
-                                        <i class="far fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                        <i class="far fa-star"></i>
+                                {% endfor %}
+                                {% if user.is_authenticated %}
+                                <form method="POST" action="/product_review/{{product.slug}}">
+                                    {% csrf_token %}
+                                    {% for message in messages %}
+                                    <script>
+                                         alert("{{message}}");
+                                    </script>
+                                    {% endfor %}
+                                    <div class="reviews-submit">
+                                        <h4>Give your Review:</h4>
+                                        <div class="ratting">
+                                            <select name="star" id="star">
+                                                <option value="5">5</option>
+                                                <option value="4">4</option>
+                                                <option value="3">3</option>
+                                                <option value="2">2</option>
+                                                <option value="1">1</option>
+                                            </select>
+                                        </div>
+                                        <div class="row form">
+                                            <div class="col-sm-12">
+                                                <textarea name="comment" placeholder="Review"></textarea>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <button type="submit">Submit</button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="row form">
-                                        <div class="col-sm-6">
-                                            <input type="text" placeholder="Name">
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <input type="email" placeholder="Email">
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <textarea placeholder="Review"></textarea>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <button>Submit</button>
-                                        </div>
-                                    </div>
-                                </div>
+                                </form>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                 <div class="product">
-                            <div class="section-header">
-                                <h1>Related Products</h1>
-                            </div>
+                <div class="product">
+                    <div class="section-header">
+                        <h1>Related Products</h1>
+                    </div>
 
-                            <div class="row align-items-center product-slider product-slider-3">
-                                {% for product in related_products %}
-                                <div class="col-lg-3">
-                                    <div class="product-item">
-                                        <div class="product-title">
-                                            <a href="/product_detail/{{product.slug}}">{{product.name}}</a>
-                                            <div class="ratting">
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                            </div>
-                                        </div>
-                                        <div class="product-image">
-                                            <a href="product-detail.html">
-                                                <img src="{{product.image.url}}" alt="Product Image">
-                                            </a>
-                                            <div class="product-action">
-                                                <a href="#"><i class="fa fa-cart-plus"></i></a>
-                                                <a href="#"><i class="fa fa-heart"></i></a>
-                                                <a href="#"><i class="fa fa-search"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="product-price">
-                                            {% if product.discounted_price > 0 %}
-                                            <h3><span>Rs</span> {{product.discounted_price}}</h3>
-                                            {% else %}
-                                            <h3><span>Rs</span> {{product.price}}</h3>
-                                            {% endif %}
-                                            <a class="btn" href=""><i class="fa fa-shopping-cart"></i>Buy Now</a>
-                                        </div>
+                    <div class="row align-items-center product-slider product-slider-3">
+                        {% for product in related_products %}
+                        <div class="col-lg-3">
+                            <div class="product-item">
+                                <div class="product-title">
+                                    <a href="/product_detail/{{product.slug}}">{{product.name}}</a>
+                                    <div class="ratting">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
                                     </div>
                                 </div>
-                                {% endfor %}
+                                <div class="product-image">
+                                    <a href="product-detail.html">
+                                        <img src="{{product.image.url}}" alt="Product Image">
+                                    </a>
+                                    <div class="product-action">
+                                        <a href="#"><i class="fa fa-cart-plus"></i></a>
+                                        <a href="#"><i class="fa fa-heart"></i></a>
+                                        <a href="#"><i class="fa fa-search"></i></a>
+                                    </div>
+                                </div>
+                                <div class="product-price">
+                                    {% if product.discounted_price > 0 %}
+                                    <h3><span>Rs</span> {{product.discounted_price}}</h3>
+                                    {% else %}
+                                    <h3><span>Rs</span> {{product.price}}</h3>
+                                    {% endif %}
+                                    <a class="btn" href=""><i class="fa fa-shopping-cart"></i>Buy Now</a>
+                                </div>
                             </div>
                         </div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
             {% endfor %}
             <!-- Side Bar Start -->
