@@ -87,3 +87,15 @@ class ProductReview(models.Model):
 
     def __str__(self):
         return self.name
+
+class Cart(models.Model):
+    username = models.CharField(max_length=300)
+    slug = models.CharField(max_length=300)
+    quantity = models.IntegerField()
+    total = models.IntegerField()
+    date = models.DateTimeField(auto_now_add=True)
+    checkout = models.BooleanField(default=False)
+    items = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.username
