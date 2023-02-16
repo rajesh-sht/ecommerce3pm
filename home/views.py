@@ -5,6 +5,15 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 # Create your views here.
 
+def count_cart(request):
+    username = request.user.username
+    cart_count = Cart.objects.filter(checkout = False, username = username).count()
+    return cart_count
+
+def review_count(request):
+    count_review = ProductReview.objects.all().count()
+    return count_review
+
 class BaseView(View):
     views = {}
     views['categories'] = Category.objects.all()
@@ -15,6 +24,7 @@ class BaseView(View):
 class HomeView(BaseView):
     def get(self,request):
         self.views
+        self.views['cart_counts'] = count_cart(request)
         self.views['subcategories'] = SubCategory.objects.all()
         self.views['sliders'] = Slider.objects.all()
         self.views['ads'] = Ad.objects.all()
@@ -27,18 +37,24 @@ class HomeView(BaseView):
 
 class CategoryView(BaseView):
     def get(self,request,slug):
+        self.views['cart_counts'] = count_cart(request)
+
         ids = Category.objects.get(slug = slug).id
         self.views['category_products'] = Product.objects.filter(category_id = ids)
         return render(request, 'category.html', self.views)
 
 class BrandView(BaseView):
     def get(self,request,slug):
+        self.views['cart_counts'] = count_cart(request)
+
         ids = Brand.objects.get(slug = slug).id
         self.views['brand_products'] = Product.objects.filter(brand_id = ids)
         return render(request, 'brand.html', self.views)
 
 class SearchView(BaseView):
     def get(self,request):
+        self.views['cart_counts'] = count_cart(request)
+
         query = request.GET.get('query')
         if query == "":
             return redirect('/')
@@ -48,6 +64,8 @@ class SearchView(BaseView):
 
 class ProductDetailView(BaseView):
     def get(self, request, slug):
+        self.views['cart_counts'] = count_cart(request)
+        self.views['review_counts'] = review_count(request)
         # for particular product detail
         self.views['product_detail'] = Product.objects.filter(slug = slug)
         # for related product
@@ -61,6 +79,7 @@ class ProductDetailView(BaseView):
         return render(request, 'product-detail.html', self.views)
 
 def product_review(request, slug):
+
     if request.method == 'POST':
         username = request.user.username
         email = request.user.email
@@ -110,6 +129,7 @@ def signup(request):
 class CartView(BaseView):
 
     def get(self, request):
+        self.views['cart_counts'] = count_cart(request)
         username = request.user.username
         self.views['cart_view'] = Cart.objects.filter(username = username)
         return render(request, 'cart.html', self.views)
@@ -172,3 +192,17 @@ def delete_cart(request, slug):
 
     return redirect('/cart')
 
+class WishlistView(BaseView):
+
+    def get(self, request):
+    #     username = request.user.username
+    #     data = Cart.objects.create(
+    #         username=username,
+    #         slug=slug,
+    #         items=Product.objects.get(slug=slug)
+    #     )
+    #     data.save()
+    #     self.views['cart_view'] = Cart.objects.filter(username = username)
+        return render(request, 'wishlist.html', self.views)
+
+# def cart_summary(BaseView):
