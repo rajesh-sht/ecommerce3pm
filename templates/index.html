@@ -6,12 +6,26 @@
 <div class="header">
     <div class="container-fluid">
         <div class="row">
+            <div class="col-md-12">
+                {% for message in messages %}
+                <center><strong><p id="cardaddmessage">{{message}}</p></strong></center>
+                <script>
+                            setTimeout(function(){
+                            var msg = document.getElementById("cardaddmessage");
+                            msg.parentNode.removeChild(msg);
+                            },3000)
+
+
+                </script>
+                {% endfor %}
+            </div>
             <div class="col-md-3">
                 <nav class="navbar bg-light">
                     <ul class="navbar-nav">
                         {% for cat in categories %}
                         <li class="nav-item">
-                            <a class="nav-link" href="/category/{{cat.slug}}"><i class="{{cat.logo}}"></i>{{cat.name}}</a>
+                            <a class="nav-link" href="/category/{{cat.slug}}"><i
+                                    class="{{cat.logo}}"></i>{{cat.name}}</a>
                         </li>
                         {% endfor %}
                     </ul>
@@ -232,13 +246,13 @@
                         </div>
                     </div>
                     <div class="product-image">
-                        <a href="product-detail.html">
+                        <a href="/product_detail/{{hot.slug}}">
                             <img src="{{hot.image.url}}" alt="Product Image">
                         </a>
                         <div class="product-action">
-                            <a href="#"><i class="fa fa-cart-plus"></i></a>
-                            <a href="#"><i class="fa fa-heart"></i></a>
-                            <a href="#"><i class="fa fa-search"></i></a>
+                            <a href="/add_to_cart/{{hot.slug}}"><i class="fa fa-cart-plus"></i></a>
+                            <a href="/add_to_wishlist/{{hot.slug}}"><i class="fa fa-heart"></i></a>
+                            <!--                            <a href="#"><i class="fa fa-search"></i></a>-->
                         </div>
                     </div>
                     <div class="product-price">
@@ -247,7 +261,8 @@
                         {% else %}
                         <h3><span>Rs</span> {{hot.price}}</h3>
                         {% endif %}
-                        <a class="btn" href="/add_to_cart/{{hot.slug}}"><i class="fa fa-shopping-cart"></i>Add To Cart</a>
+                        <a class="btn" href="/add_to_cart/{{hot.slug}}"><i class="fa fa-shopping-cart"></i>Add To
+                            Cart</a>
                     </div>
                 </div>
             </div>
@@ -265,9 +280,13 @@
                 <h1>Subscribe Our Newsletter</h1>
             </div>
             <div class="col-md-6">
+
                 <div class="form">
-                    <input type="email" value="Your email here">
-                    <button>Submit</button>
+                    <form method="POST" action="{% url  'newsletters' %}">
+                        {% csrf_token %}
+                        <input name="email" type="email" placeholder="Your email here">
+                        <button type="submit" class="btn">Submit</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -296,13 +315,13 @@
                         </div>
                     </div>
                     <div class="product-image">
-                        <a href="product-detail.html">
+                        <a href="/product_detail/{{new.slug}}">
                             <img src="{{new.image.url}}" alt="Product Image">
                         </a>
                         <div class="product-action">
-                            <a href="#"><i class="fa fa-cart-plus"></i></a>
-                            <a href="#"><i class="fa fa-heart"></i></a>
-                            <a href="#"><i class="fa fa-search"></i></a>
+                            <a href="/add_to_cart/{{new.slug}}"><i class="fa fa-cart-plus"></i></a>
+                            <a href="/add_to_wishlist/{{new.slug}}"><i class="fa fa-heart"></i></a>
+                            <!--                            <a href="#"><i class="fa fa-search"></i></a>-->
                         </div>
                     </div>
                     <div class="product-price">
@@ -311,7 +330,8 @@
                         {% else %}
                         <h3><span>Rs</span> {{new.price}}</h3>
                         {% endif %}
-                        <a class="btn" href="/add_to_cart/{{new.slug}}"><i class="fa fa-shopping-cart"></i>Add To Cart</a>
+                        <a class="btn" href="/add_to_cart/{{new.slug}}"><i class="fa fa-shopping-cart"></i>Add To
+                            Cart</a>
                     </div>
                 </div>
             </div>

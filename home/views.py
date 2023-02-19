@@ -10,10 +10,12 @@ def count_cart(request):
     cart_count = Cart.objects.filter(checkout = False, username = username).count()
     return cart_count
 
-def review_count(request):
-    count_review = ProductReview.objects.all().count()
-    return count_review
 
+
+def count_wishlist(request):
+    username = request.user.username
+    wishlist_count = Wishlist.objects.filter(username = username).count()
+    return wishlist_count
 class BaseView(View):
     views = {}
     views['categories'] = Category.objects.all()
@@ -25,6 +27,7 @@ class HomeView(BaseView):
     def get(self,request):
         self.views
         self.views['cart_counts'] = count_cart(request)
+        self.views['wishtlist_count'] = count_wishlist(request)
         self.views['subcategories'] = SubCategory.objects.all()
         self.views['sliders'] = Slider.objects.all()
         self.views['ads'] = Ad.objects.all()
@@ -38,7 +41,7 @@ class HomeView(BaseView):
 class CategoryView(BaseView):
     def get(self,request,slug):
         self.views['cart_counts'] = count_cart(request)
-
+        self.views['wishtlist_count'] = count_wishlist(request)
         ids = Category.objects.get(slug = slug).id
         self.views['category_products'] = Product.objects.filter(category_id = ids)
         return render(request, 'category.html', self.views)
@@ -46,7 +49,7 @@ class CategoryView(BaseView):
 class BrandView(BaseView):
     def get(self,request,slug):
         self.views['cart_counts'] = count_cart(request)
-
+        self.views['wishtlist_count'] = count_wishlist(request)
         ids = Brand.objects.get(slug = slug).id
         self.views['brand_products'] = Product.objects.filter(brand_id = ids)
         return render(request, 'brand.html', self.views)
@@ -54,7 +57,7 @@ class BrandView(BaseView):
 class SearchView(BaseView):
     def get(self,request):
         self.views['cart_counts'] = count_cart(request)
-
+        self.views['wishtlist_count'] = count_wishlist(request)
         query = request.GET.get('query')
         if query == "":
             return redirect('/')
@@ -64,8 +67,10 @@ class SearchView(BaseView):
 
 class ProductDetailView(BaseView):
     def get(self, request, slug):
+        self.views['count_review'] = ProductReview.objects.filter(slug = slug).count()
+
         self.views['cart_counts'] = count_cart(request)
-        self.views['review_counts'] = review_count(request)
+        self.views['wishtlist_count'] = count_wishlist(request)
         # for particular product detail
         self.views['product_detail'] = Product.objects.filter(slug = slug)
         # for related product
@@ -130,11 +135,53 @@ class CartView(BaseView):
 
     def get(self, request):
         self.views['cart_counts'] = count_cart(request)
+        self.views['wishtlist_count'] = count_wishlist(request)
         username = request.user.username
-        self.views['cart_view'] = Cart.objects.filter(username = username)
+        self.views['cart_view'] = Cart.objects.filter(username = username, checkout = False)
+        s = 0
+        for i in self.views['cart_view']:
+            s = s + i.total
+        self.views['sub_total'] = s
+        self.views['delivery_charge'] = 50
+        self.views['Grand_total'] = s + 50
         return render(request, 'cart.html', self.views)
 
 def add_to_cart(request, slug):
+    username = request.user.username
+    if Product.objects.filter(slug = slug).exists():
+        if Cart.objects.filter(slug =slug, checkout = False, username = username).exists():
+            quantity = Cart.objects.get(slug =slug, checkout = False, username = username).quantity
+            price = Product.objects.get(slug=slug).price
+            discounted_price = Product.objects.get(slug=slug).discounted_price
+            quantity = quantity + 1
+            if discounted_price > 0:
+                total = discounted_price*quantity
+            else:
+                total = price*quantity
+            Cart.objects.filter(slug=slug, checkout=False, username=username).update(total = total, quantity = quantity)
+        else:
+            price = Product.objects.get(slug=slug).price
+            discounted_price = Product.objects.get(slug=slug).discounted_price
+            if discounted_price > 0:
+                total = discounted_price
+            else:
+                total = price
+            data = Cart.objects.create(
+                username = username,
+                slug = slug,
+                quantity = 1,
+                total = total,
+                items = Product.objects.get(slug=slug)
+            )
+            data.save()
+            messages.success(request, "Product successfully added to cart!")
+
+    else:
+        return redirect('/')
+    return redirect('/')
+
+
+def increase_cart_quantity(request, slug):
     username = request.user.username
     if Product.objects.filter(slug = slug).exists():
         if Cart.objects.filter(slug =slug, checkout = False, username = username).exists():
@@ -180,6 +227,7 @@ def reduce_quantity(request, slug):
                 else:
                     total = price * quantity
                 Cart.objects.filter(slug=slug, checkout=False, username=username).update(total=total, quantity=quantity)
+                # messages.success(request, "Product quantity deducted successfully.")
             else:
                 messages.error(request, "The quantity is already 1.")
 
@@ -195,14 +243,98 @@ def delete_cart(request, slug):
 class WishlistView(BaseView):
 
     def get(self, request):
-    #     username = request.user.username
-    #     data = Cart.objects.create(
-    #         username=username,
-    #         slug=slug,
-    #         items=Product.objects.get(slug=slug)
-    #     )
-    #     data.save()
-    #     self.views['cart_view'] = Cart.objects.filter(username = username)
+        username = request.user.username
+        self.views['wishlist_views'] = Wishlist.objects.filter(username = username)
+        self.views['wishtlist_count'] = count_wishlist(request)
+
         return render(request, 'wishlist.html', self.views)
 
 # def cart_summary(BaseView):
+
+
+def add_to_wishlist(request, slug):
+    username = request.user.username
+    if Product.objects.filter(slug=slug).exists():
+        if Wishlist.objects.filter(slug=slug, username=username).exists():
+            messages.error(request, "This product is already added to your wishlist!")
+        else:
+            data = Wishlist.objects.create(
+                username=username,
+                slug=slug,
+                items=Product.objects.get(slug=slug)
+            )
+            data.save()
+            messages.success(request, "Product successfully added to Wishlist!")
+    return redirect('/')
+
+
+def add_wishlist_to_cart(request, slug):
+    username = request.user.username
+    if Product.objects.filter(slug=slug).exists():
+        if Cart.objects.filter(slug=slug, checkout=False, username=username).exists():
+            quantity = Cart.objects.get(slug=slug, checkout=False, username=username).quantity
+            price = Product.objects.get(slug=slug).price
+            discounted_price = Product.objects.get(slug=slug).discounted_price
+            quantity = quantity + 1
+            if discounted_price > 0:
+                total = discounted_price * quantity
+            else:
+                total = price * quantity
+            Cart.objects.filter(slug=slug, checkout=False, username=username).update(total=total, quantity=quantity)
+        else:
+            price = Product.objects.get(slug=slug).price
+            discounted_price = Product.objects.get(slug=slug).discounted_price
+            if discounted_price > 0:
+                total = discounted_price
+            else:
+                total = price
+            data = Cart.objects.create(
+                username=username,
+                slug=slug,
+                quantity=1,
+                total=total,
+                items=Product.objects.get(slug=slug)
+            )
+            data.save()
+            Wishlist.objects.filter(slug=slug, username=username).delete()
+            messages.success(request, "Product successfully added to cart!")
+
+
+    return redirect('/wishlist')
+def delete_wishlist(request, slug):
+    username = request.user.username
+    if Wishlist.objects.filter(slug=slug, username=username).exists():
+        Wishlist.objects.filter(slug=slug, username=username).delete()
+
+    return redirect('/wishlist')
+
+
+def newsletters(request):
+    if request.method == "POST":
+        email = request.POST['email']
+        if Newsletter.objects.filter(email=email).exists():
+            messages.error(request, 'This Email is already submitted!')
+        else:
+            data = Newsletter.objects.create(
+                email = email
+            )
+            data.save()
+            messages.success(request, 'Thanks for submitted your Email!')
+    return redirect('/')
+
+class CheckoutView(BaseView):
+    def get(self, request):
+        self.views['cart_counts'] = count_cart(request)
+        self.views['wishtlist_count'] = count_wishlist(request)
+        username = request.user.username
+        self.views['cart_view'] = Cart.objects.filter(username=username, checkout=True)
+        s = 0
+        for i in self.views['cart_view']:
+            s = s + i.total
+        self.views['sub_total'] = s
+        self.views['delivery_charge'] = 50
+        self.views['Grand_total'] = s + 50
+        return render(request, 'checkout.html', self.views)
+
+
+

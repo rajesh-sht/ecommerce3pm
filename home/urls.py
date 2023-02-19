@@ -11,8 +11,16 @@ urlpatterns = [
     path('product_review/<slug>', product_review, name='product_review'),
     path('cart', CartView.as_view(), name='cart'),
     path('add_to_cart/<slug>', add_to_cart, name='add_to_cart'),
+    path('increase_cart_quantity/<slug>', increase_cart_quantity, name='increase_cart_quantity'),
     path('reduce_quantity/<slug>', reduce_quantity, name='reduce_quantity'),
     path('delete_cart/<slug>', delete_cart, name='delete_cart'),
-    path('wishlist', WishlistView.as_view(), name='cart'),
+    path('wishlist', WishlistView.as_view(), name='wishlist'),
+    path('add_to_wishlist/<slug>', add_to_wishlist, name='add_to_wishlist'),
+    path('add_wishlist_to_cart/<slug>', add_wishlist_to_cart, name='add_wishlist_to_cart'),
+    path('delete_wishlist/<slug>', delete_wishlist, name='delete_wishlist'),
+    path('checkout', CheckoutView.as_view(), name='checkout'),
+    path('newsletters', newsletters, name='newsletters'),
 
 ]
+
+

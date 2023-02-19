@@ -23,6 +23,13 @@
 
     <!-- Template Stylesheet -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <style>
+        #cardaddmessage {
+            background-color:#50ad09;
+            color:#ffffff;
+            padding: 10px 0px 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -94,7 +101,7 @@
             <div class="col-md-6">
                 <form method="GET" action="/search">
                     <div class="search">
-                        <input name = "query" type="text" placeholder="Search">
+                        <input name="query" type="text" placeholder="Search">
                         <button type="submit"><i class="fa fa-search"></i></button>
                     </div>
                 </form>
@@ -103,7 +110,7 @@
                 <div class="user">
                     <a href="/wishlist" class="btn wishlist">
                         <i class="fa fa-heart"></i>
-                        <span>(0)</span>
+                        <span>({{wishtlist_count}})</span>
                     </a>
                     <a href="/cart" class="btn cart">
                         <i class="fa fa-shopping-cart"></i>
