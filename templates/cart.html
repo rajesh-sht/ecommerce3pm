@@ -20,12 +20,13 @@
             <div class="col-lg-8">
                 <div class="cart-page-inner">
                     <div class="table-responsive">
+<!--                        popup alert message-->
                         {% for message in messages %}
                         <script>
                             alert("{{message}}");
-
                         </script>
                         {% endfor %}
+<!--                        end popup error message-->
                         <table class="table table-bordered">
                             <thead class="thead-dark">
                             <tr>

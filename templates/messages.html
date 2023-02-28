@@ -1,0 +1,30 @@
+<!--  {% for message in messages %}-->
+<!--                <center><strong><p id="cardaddmessage">{{message}}</p></strong></center>-->
+<!--                <script>-->
+<!--                            setTimeout(function(){-->
+<!--                            var msg = document.getElementById("cardaddmessage");-->
+<!--                            msg.parentNode.removeChild(msg);-->
+<!--                            },3000)-->
+
+
+
+<!--                </script>-->
+<!--                {% endfor %}-->
+
+
+ {% for message in messages %}
+        <div class="alert {{ message.tags }} alert-dismissible" id="flashmsg" role="alert"
+            style="padding-bottom: 0px; margin-top: 6px; margin-left: 15px;">
+            <script>
+                setTimeout(function () {
+                    var msg = document.getElementById("flashmsg");
+                    msg.parentNode.removeChild(msg);
+                }, 3000)
+            </script>
+            <center>
+                <strong>
+                    <p>{{ message }}</p>
+                </strong>
+            </center>
+        </div>
+        {% endfor %}

@@ -5,15 +5,7 @@
 <div class="breadcrumb-wrap">
     <div class="container-fluid">
         <div class="col-md-12">
-                {% for message in messages %}
-                    <center><strong><p id="cardaddmessage">{{message}}</p></strong></center>
-                        <script>
-                            setTimeout(function(){
-                            var msg = document.getElementById("cardaddmessage");
-                            msg.parentNode.removeChild(msg);
-                            },3000)
-                        </script>
-                {% endfor %}
+               {% include 'messages.html' %}
             </div>
         <ul class="breadcrumb">
             <li class="breadcrumb-item"><a href="#">Home</a></li>

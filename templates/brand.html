@@ -82,9 +82,9 @@
                                     <img src="{{product.image.url}}" alt="Product Image">
                                 </a>
                                 <div class="product-action">
-                                    <a href="#"><i class="fa fa-cart-plus"></i></a>
-                                    <a href="#"><i class="fa fa-heart"></i></a>
-                                    <a href="#"><i class="fa fa-search"></i></a>
+                                    <a href="/add_to_cart/{{product.slug}}"><i class="fa fa-cart-plus"></i></a>
+                                    <a href="/add_to_wishlist/{{product.slug}}"><i class="fa fa-heart"></i></a>
+<!--                                    <a href="#"><i class="fa fa-search"></i></a>-->
                                 </div>
                             </div>
                             <div class="product-price">
@@ -93,7 +93,7 @@
                                 {% else %}
                                 <h3><span>Rs</span> {{product.price}}</h3>
                                 {% endif %}
-                                <a class="btn" href=""><i class="fa fa-shopping-cart"></i>Buy Now</a>
+                                <a class="btn" href=""><i class="fa fa-shopping-cart"></i>Add to cart</a>
                             </div>
                         </div>
                     </div>

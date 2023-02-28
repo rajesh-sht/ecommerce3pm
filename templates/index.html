@@ -7,17 +7,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                {% for message in messages %}
-                <center><strong><p id="cardaddmessage">{{message}}</p></strong></center>
-                <script>
-                            setTimeout(function(){
-                            var msg = document.getElementById("cardaddmessage");
-                            msg.parentNode.removeChild(msg);
-                            },3000)
-
-
-                </script>
-                {% endfor %}
+                {% include 'messages.html' %}
             </div>
             <div class="col-md-3">
                 <nav class="navbar bg-light">

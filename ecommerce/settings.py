@@ -111,7 +111,7 @@ USE_I18N = True
 USE_TZ = True
 
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/accounts/login'
+LOGOUT_REDIRECT_URL = '/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -131,3 +131,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+try:
+    from django.contrib.messages import constants as messages
+    MESSAGE_TAGS = {
+        messages.SUCCESS: 'alert-success',
+        messages.ERROR: 'alert-danger',
+    }
+except Exception as e:
+    pass
